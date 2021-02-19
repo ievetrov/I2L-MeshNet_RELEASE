@@ -1,0 +1,11 @@
+.idea
+*.pyc
+snapshot_8.pth.tar
+basicmodel_m_lbs_10_207_0_v1.0.0.pkl
+basicModel_neutral_lbs_10_207_0_v1.0.0.pkl
+basicModel_f_lbs_10_207_0_v1.0.0.pkl
+output/log/train_logs.txt
+*.jpg
+*.jpg
+*.obj
+*.tar

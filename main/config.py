@@ -60,7 +60,7 @@ class Config:
             self.lr_dec_epoch = [x+5 for x in self.lr_dec_epoch]
             self.end_epoch = self.end_epoch + 5
         self.continue_train = continue_train
-        os.environ["CUDA_VISIBLE_DEVICES"] = self.gpu_ids
+        os.environ["CUDA_VISIBLE_DEVICES"] = ''
         print('>>> Using GPU: {}'.format(self.gpu_ids))
         
         if self.testset == 'FreiHAND':

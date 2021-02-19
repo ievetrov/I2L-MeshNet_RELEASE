@@ -68,7 +68,7 @@ assert osp.exists(model_path), 'Cannot find model at ' + model_path
 print('Load checkpoint from {}'.format(model_path))
 model = get_model(vertex_num, joint_num, 'test')
 
-model = DataParallel(model).cuda()
+model = DataParallel(model).cpu()
 ckpt = torch.load(model_path)
 model.load_state_dict(ckpt['network'], strict=False)
 model.eval()
@@ -84,7 +84,7 @@ bbox = [139.41, 102.25, 222.39, 241.57] # xmin, ymin, width, height
 bbox = process_bbox(bbox, original_img_width, original_img_height)
 img, img2bb_trans, bb2img_trans = generate_patch_image(original_img, bbox, 1.0, 0.0, False, cfg.input_img_shape) 
 img = transform(img.astype(np.float32))/255
-img = img.cuda()[None,:,:,:]
+img = img.cpu()[None,:,:,:]
 
 # forward
 inputs = {'img': img}

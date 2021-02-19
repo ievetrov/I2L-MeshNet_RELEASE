@@ -22,10 +22,10 @@ class Model(nn.Module):
         
         if 'FreiHAND' in cfg.trainset_3d + cfg.trainset_2d + [cfg.testset]:
             self.human_model = MANO()
-            self.human_model_layer = self.human_model.layer.cuda()
+            self.human_model_layer = self.human_model.layer.cpu()
         else:
             self.human_model = SMPL()
-            self.human_model_layer = self.human_model.layer['neutral'].cuda()
+            self.human_model_layer = self.human_model.layer['neutral'].cpu()
         self.root_joint_idx = self.human_model.root_joint_idx
         self.mesh_face = self.human_model.face
         self.joint_regressor = self.human_model.joint_regressor
@@ -40,7 +40,7 @@ class Model(nn.Module):
         y = torch.arange(cfg.output_hm_shape[1])
         z = torch.arange(cfg.output_hm_shape[0])
         zz,yy,xx = torch.meshgrid(z,y,x)
-        xx = xx[None,None,:,:,:].cuda().float(); yy = yy[None,None,:,:,:].cuda().float(); zz = zz[None,None,:,:,:].cuda().float();
+        xx = xx[None,None,:,:,:].cpu().float(); yy = yy[None,None,:,:,:].cpu().float(); zz = zz[None,None,:,:,:].cpu().float();
         
         x = joint_coord_img[:,:,0,None,None,None]; y = joint_coord_img[:,:,1,None,None,None]; z = joint_coord_img[:,:,2,None,None,None];
         heatmap = torch.exp(-(((xx-x)/cfg.sigma)**2)/2 -(((yy-y)/cfg.sigma)**2)/2 - (((zz-z)/cfg.sigma)**2)/2)
@@ -68,7 +68,7 @@ class Model(nn.Module):
             mesh_coord_img = self.mesh_net(mesh_img_feat)
             
             # joint coordinate outputs from mesh coordinates
-            joint_img_from_mesh = torch.bmm(torch.from_numpy(self.joint_regressor).cuda()[None,:,:].repeat(mesh_coord_img.shape[0],1,1), mesh_coord_img)
+            joint_img_from_mesh = torch.bmm(torch.from_numpy(self.joint_regressor).cpu()[None,:,:].repeat(mesh_coord_img.shape[0],1,1), mesh_coord_img)
             mesh_coord_cam = None
 
         if cfg.stage == 'param':
@@ -77,7 +77,7 @@ class Model(nn.Module):
 
             # get mesh and joint coordinates
             mesh_coord_cam, _ = self.human_model_layer(pose_param, shape_param)
-            joint_coord_cam = torch.bmm(torch.from_numpy(self.joint_regressor).cuda()[None,:,:].repeat(mesh_coord_cam.shape[0],1,1), mesh_coord_cam)
+            joint_coord_cam = torch.bmm(torch.from_numpy(self.joint_regressor).cpu()[None,:,:].repeat(mesh_coord_cam.shape[0],1,1), mesh_coord_cam)
 
             # root-relative 3D coordinates
             root_joint_cam = joint_coord_cam[:,self.root_joint_idx,None,:]

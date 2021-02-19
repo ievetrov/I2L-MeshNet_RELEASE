@@ -18,7 +18,7 @@ class PoseNet(nn.Module):
     def soft_argmax_1d(self, heatmap1d):
         heatmap1d = F.softmax(heatmap1d, 2)
         heatmap_size = heatmap1d.shape[2]
-        coord = heatmap1d * torch.arange(heatmap_size).float().cuda()
+        coord = heatmap1d * torch.arange(heatmap_size).float().cpu()
         coord = coord.sum(dim=2, keepdim=True)
         return coord
 
@@ -70,7 +70,7 @@ class MeshNet(nn.Module):
     def soft_argmax_1d(self, heatmap1d):
         heatmap1d = F.softmax(heatmap1d, 2)
         heatmap_size = heatmap1d.shape[2]
-        coord = heatmap1d * torch.arange(heatmap_size).float().cuda()
+        coord = heatmap1d * torch.arange(heatmap_size).float().cpu()
         coord = coord.sum(dim=2, keepdim=True)
         return coord
 
@@ -123,7 +123,7 @@ class ParamRegressor(nn.Module):
 
         pose = self.fc_pose(feat)
         pose = self.rot6d_to_rotmat(pose)
-        pose = torch.cat([pose,torch.zeros((pose.shape[0],3,1)).cuda().float()],2)
+        pose = torch.cat([pose,torch.zeros((pose.shape[0],3,1)).cpu().float()],2)
         pose = tgm.rotation_matrix_to_angle_axis(pose).reshape(-1,72)
         
         shape = self.fc_shape(feat)
